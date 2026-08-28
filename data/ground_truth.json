@@ -1,0 +1,67 @@
+[
+  {
+    "scenario_id": "01",
+    "actual_cause": "n_plus_one_query",
+    "injected_noise": "slightly slow external call"
+  },
+  {
+    "scenario_id": "02",
+    "actual_cause": "lock_contention",
+    "injected_noise": "mildly elevated GC pauses"
+  },
+  {
+    "scenario_id": "03",
+    "actual_cause": "gc_pause",
+    "injected_noise": "elevated pool wait"
+  },
+  {
+    "scenario_id": "04",
+    "actual_cause": "connection_pool_exhaustion",
+    "injected_noise": "slightly slow disk"
+  },
+  {
+    "scenario_id": "05",
+    "actual_cause": "slow_downstream",
+    "injected_noise": "minor N+1 pattern"
+  },
+  {
+    "scenario_id": "06",
+    "actual_cause": "stale_cache",
+    "injected_noise": "CPU slightly elevated"
+  },
+  {
+    "scenario_id": "07",
+    "actual_cause": "thread_starvation",
+    "injected_noise": "Lock wait slightly elevated"
+  },
+  {
+    "scenario_id": "08",
+    "actual_cause": "disk_io_saturation",
+    "injected_noise": "Memory slightly elevated"
+  },
+  {
+    "scenario_id": "09",
+    "actual_cause": "memory_pressure",
+    "injected_noise": "GC slightly elevated"
+  },
+  {
+    "scenario_id": "10",
+    "actual_cause": "network_retry_storm",
+    "injected_noise": "Slow downstream caused by storm"
+  },
+  {
+    "scenario_id": "11",
+    "actual_cause": "pagination_bug",
+    "injected_noise": "Slow overall DB time"
+  },
+  {
+    "scenario_id": "12",
+    "actual_cause": "none",
+    "injected_noise": "none"
+  },
+  {
+    "scenario_id": "13",
+    "actual_cause": "lock_and_downstream",
+    "injected_noise": "Both are genuinely failing"
+  }
+]
