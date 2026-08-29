@@ -17,18 +17,23 @@ You will be given TWO snapshots of service metrics:
 
 Your job is to identify the root cause by comparing the two. Look for signals that have changed significantly from the baseline, not just high absolute values.
 
-You MUST respond with ONLY a JSON object in this exact format:
-{
-  "proposed_cause": "<one of: n_plus_one_query, lock_contention, gc_pause, connection_pool_exhaustion, slow_downstream, stale_cache, thread_starvation, disk_io_saturation, memory_pressure, network_retry_storm, pagination_bug, none>",
-  "reasoning": "<explanation referencing specific delta changes from baseline>"
-}
+You must explicitly extract the metric deltas as evidence, and explicitly list at least one alternative cause you considered and why you ruled it out.`
 
-Do not include any text outside the JSON.`
-
-// DetectiveResult is the parsed response from the Detective LLM
+// DetectiveResult is the parsed response from the Detective LLM (populated via Tool Use)
 type DetectiveResult struct {
-	ProposedCause string `json:"proposed_cause"`
-	Reasoning     string `json:"reasoning"`
+	ProposedCause string  `json:"proposed_cause"`
+	Confidence    float64 `json:"confidence"`
+	Evidence      []struct {
+		Metric        string  `json:"metric"`
+		BaselineValue float64 `json:"baseline_value"`
+		IncidentValue float64 `json:"incident_value"`
+		Delta         string  `json:"delta"`
+	} `json:"evidence"`
+	RuledOut []struct {
+		Cause       string `json:"cause"`
+		WhyRejected string `json:"why_rejected"`
+	} `json:"ruled_out"`
+	Reasoning string `json:"reasoning"`
 }
 
 // AgentDiagnosis is the final structured report after verification passes
@@ -73,17 +78,17 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 			return nil, fmt.Errorf("llm call failed on attempt %d: %w", attempt, err)
 		}
 
-		// Parse Detective reply
+		// Parse Detective reply (which is now guaranteed to be the JSON from the tool call)
 		parsed := parseDetective(raw)
 		if parsed == nil {
-			// Unparseable reply — try once more with correction
+			// This shouldn't happen with Tool Use, but just in case
 			conversation = append(conversation,
-				LLMMessage{Role: "assistant", Content: raw},
-				LLMMessage{Role: "user", Content: "Your response was not valid JSON. Respond ONLY with the JSON object, no other text."},
+				LLMMessage{Role: "user", Content: "Your response did not match the required tool schema. Please try again."},
 			)
 			continue
 		}
 
+		// Add the raw tool JSON back to the conversation history for context
 		conversation = append(conversation, LLMMessage{Role: "assistant", Content: raw})
 
 		// Special case: agent says "none" — run clean check
