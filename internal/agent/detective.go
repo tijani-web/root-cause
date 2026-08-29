@@ -41,6 +41,7 @@ type AgentDiagnosis struct {
 	RejectedHypotheses []RejectedHypothesis  `json:"rejected_hypotheses"`
 	Reasoning         string                 `json:"reasoning"`
 	Attempts          int                    `json:"attempts"`
+	Trajectory        []LLMMessage           `json:"-"`
 }
 
 // RejectedHypothesis records a failed attempt for the report
@@ -105,6 +106,7 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 					RejectedHypotheses: rejected,
 					Reasoning:  parsed.Reasoning,
 					Attempts:   attempt,
+					Trajectory: conversation,
 				}, nil
 			}
 			// Some signature passes — Detective was wrong, push back
@@ -140,6 +142,7 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 				RejectedHypotheses: rejected,
 				Reasoning:  parsed.Reasoning,
 				Attempts:   attempt,
+				Trajectory: conversation,
 			}, nil
 		}
 
@@ -165,6 +168,7 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 		RejectedHypotheses: rejected,
 		Reasoning:         "Agent could not find a passing signature within max attempts",
 		Attempts:          maxAttempts,
+		Trajectory:        conversation,
 	}, nil
 }
 

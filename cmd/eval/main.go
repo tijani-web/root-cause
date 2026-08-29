@@ -25,6 +25,8 @@ type EvalRecord struct {
 
 func main() {
 	outDir := filepath.Join("data", "scenarios")
+	trajDir := filepath.Join("data", "trajectories")
+	os.MkdirAll(trajDir, 0755)
 
 	// Load ground truth
 	tb, err := os.ReadFile(filepath.Join("data", "ground_truth.json"))
@@ -90,6 +92,10 @@ func main() {
 			if len(diag.RejectedHypotheses) > 0 {
 				fmt.Printf("  [AGENT]    rejected %d hypotheses before confirming\n", len(diag.RejectedHypotheses))
 			}
+
+			// Save trajectory
+			trajJSON, _ := json.MarshalIndent(diag.Trajectory, "", "  ")
+			os.WriteFile(filepath.Join(trajDir, fmt.Sprintf("scenario_%s.json", scenarioID)), trajJSON, 0644)
 		}
 		fmt.Printf("  [AGENT]    got=%s correct=%v attempts=%d\n", agentCause, agentCorrect, agentAttempts)
 		fmt.Println()
