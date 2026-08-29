@@ -1,0 +1,145 @@
+[
+  {
+    "scenario_id": "01",
+    "actual_cause": "n_plus_one_query",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "02",
+    "actual_cause": "lock_contention",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "03",
+    "actual_cause": "gc_pause",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "04",
+    "actual_cause": "connection_pool_exhaustion",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "05",
+    "actual_cause": "slow_downstream",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "06",
+    "actual_cause": "stale_cache",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "07",
+    "actual_cause": "thread_starvation",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "08",
+    "actual_cause": "disk_io_saturation",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "09",
+    "actual_cause": "memory_pressure",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "10",
+    "actual_cause": "network_retry_storm",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "11",
+    "actual_cause": "pagination_bug",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "12",
+    "actual_cause": "none",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  },
+  {
+    "scenario_id": "13",
+    "actual_cause": "lock_and_downstream",
+    "baseline_cause": "error",
+    "agent_cause": "error",
+    "baseline_correct": false,
+    "agent_correct": false,
+    "agent_attempts": 0,
+    "baseline_reasoning": "api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in.",
+    "agent_reasoning": "llm call failed on attempt 1: api error: anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the workspace this request acts in."
+  }
+]

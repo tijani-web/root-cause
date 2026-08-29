@@ -155,6 +155,11 @@ func Call(messages []LLMMessage) (string, error) {
 	req.Header.Set("x-api-key", apiKey)
 	req.Header.Set("anthropic-version", "2023-06-01")
 	req.Header.Set("content-type", "application/json")
+	
+	workspaceID := os.Getenv("ANTHROPIC_WORKSPACE_ID")
+	if workspaceID != "" {
+		req.Header.Set("anthropic-workspace-id", workspaceID)
+	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
