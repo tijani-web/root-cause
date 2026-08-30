@@ -22,6 +22,7 @@ var Registry = map[string]CheckFunc{
 	"memory_pressure":            CheckMemoryPressure,
 	"network_retry_storm":        CheckNetworkRetryStorm,
 	"pagination_bug":             CheckPaginationBug,
+	"lock_and_downstream":        CheckLockAndDownstream,
 }
 
 func CheckNPlusOne(h, i models.Snapshot) SignatureResult {
@@ -209,4 +210,27 @@ func CheckPaginationBug(h, i models.Snapshot) SignatureResult {
 		"db_payload_size_bytes": i.DBPayloadSizeBytes,
 		"execution_time_ms":     i.ExecutionTimeMs,
 	}}
+}
+
+// CheckLockAndDownstream is a composite signature that fires only when both
+// lock_contention AND slow_downstream pass independently. This handles
+// multi-signal incidents where two root causes overlap.
+func CheckLockAndDownstream(h, i models.Snapshot) SignatureResult {
+	lockResult := CheckLockContention(h, i)
+	if !lockResult.Passed {
+		return SignatureResult{Passed: false, FailedCondition: "lock_contention sub-signature failed: " + lockResult.FailedCondition}
+	}
+	downstreamResult := CheckSlowDownstream(h, i)
+	if !downstreamResult.Passed {
+		return SignatureResult{Passed: false, FailedCondition: "slow_downstream sub-signature failed: " + downstreamResult.FailedCondition}
+	}
+	// Merge matched fields from both sub-signatures
+	merged := map[string]interface{}{}
+	for k, v := range lockResult.MatchedFields {
+		merged["lock_"+k] = v
+	}
+	for k, v := range downstreamResult.MatchedFields {
+		merged["downstream_"+k] = v
+	}
+	return SignatureResult{Passed: true, MatchedFields: merged}
 }

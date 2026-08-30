@@ -96,7 +96,7 @@ func Call(messages []LLMMessage) (string, error) {
 					"n_plus_one_query", "lock_contention", "gc_pause",
 					"connection_pool_exhaustion", "slow_downstream", "stale_cache",
 					"thread_starvation", "disk_io_saturation", "memory_pressure",
-					"network_retry_storm", "pagination_bug", "none",
+					"network_retry_storm", "pagination_bug", "lock_and_downstream", "none",
 				},
 			},
 			"confidence": map[string]interface{}{

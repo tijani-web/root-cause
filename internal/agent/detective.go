@@ -128,7 +128,7 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 		if !exists {
 			conversation = append(conversation, LLMMessage{
 				Role:    "user",
-				Content: fmt.Sprintf("VERIFIER REJECTION: '%s' is not a known cause. Choose from: n_plus_one_query, lock_contention, gc_pause, connection_pool_exhaustion, slow_downstream, stale_cache, thread_starvation, disk_io_saturation, memory_pressure, network_retry_storm, pagination_bug, none.", parsed.ProposedCause),
+				Content: fmt.Sprintf("VERIFIER REJECTION: '%s' is not a known cause. Choose from: n_plus_one_query, lock_contention, gc_pause, connection_pool_exhaustion, slow_downstream, stale_cache, thread_starvation, disk_io_saturation, memory_pressure, network_retry_storm, pagination_bug, lock_and_downstream, none.", parsed.ProposedCause),
 			})
 			rejected = append(rejected, RejectedHypothesis{Cause: parsed.ProposedCause, FailedCondition: "unknown cause"})
 			continue
@@ -137,12 +137,45 @@ func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
 		// Run the Verifier
 		result := checkFn(s.Healthy, s.Incident)
 		if result.Passed {
-			// ✅ Verified — build the final report
+			// Check if a stronger signal exists across all signatures (dominant-cause resolution)
+			proposedScore := signatures.Score(s.Healthy, s.Incident, result, parsed.ProposedCause)
+			dominantCause := parsed.ProposedCause
+			dominantScore := proposedScore
+
+			for name, fn := range signatures.Registry {
+				if name == parsed.ProposedCause {
+					continue
+				}
+				r := fn(s.Healthy, s.Incident)
+				if r.Passed {
+					sc := signatures.Score(s.Healthy, s.Incident, r, name)
+					if sc > dominantScore {
+						dominantCause = name
+						dominantScore = sc
+					}
+				}
+			}
+
+			if dominantCause != parsed.ProposedCause && dominantScore > proposedScore+0.1 {
+				// A stronger signal exists — reject and redirect the LLM
+				redirectMsg := fmt.Sprintf(
+					"VERIFIER REJECTION: Your hypothesis '%s' passed its signature (score=%.2f), but '%s' has a stronger signal (score=%.2f). In multi-signal incidents, report the dominant cause. Revise your diagnosis.",
+					parsed.ProposedCause, proposedScore, dominantCause, dominantScore,
+				)
+				conversation = append(conversation, LLMMessage{Role: "user", Content: redirectMsg})
+				rejected = append(rejected, RejectedHypothesis{
+					Cause:           parsed.ProposedCause,
+					FailedCondition: fmt.Sprintf("weaker signal (%.2f) vs dominant %s (%.2f)", proposedScore, dominantCause, dominantScore),
+				})
+				continue
+			}
+
+			// Verified as dominant — build the final report
 			return &AgentDiagnosis{
 				ScenarioID: s.ScenarioID,
 				FinalCause: parsed.ProposedCause,
 				Confidence: "high",
-				VerifiedBy: "signature_check_v1",
+				VerifiedBy: "signature_check_v2_dominant",
 				Evidence:   result.MatchedFields,
 				RejectedHypotheses: rejected,
 				Reasoning:  parsed.Reasoning,

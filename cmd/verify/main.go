@@ -48,10 +48,10 @@ func main() {
 				fmt.Printf("[PASS] Scenario 12 cleanly rejected all signatures.\n")
 			}
 		} else if s.ScenarioID == "13" {
-			if passedCount != 2 {
-				fmt.Printf("[FAIL] Scenario 13 (Hard) should have 2 passing signatures. Got %d: %v\n", passedCount, passedSignatures)
+			if passedCount != 3 {
+				fmt.Printf("[FAIL] Scenario 13 (Hard) should have 3 passing signatures (lock, downstream, composite). Got %d: %v\n", passedCount, passedSignatures)
 			} else {
-				fmt.Printf("[PASS] Scenario 13 correctly passed 2 partial signatures: %v\n", passedSignatures)
+				fmt.Printf("[PASS] Scenario 13 correctly passed 3 signatures (lock_contention + slow_downstream + lock_and_downstream): %v\n", passedSignatures)
 			}
 		} else {
 			if passedCount != 1 {
