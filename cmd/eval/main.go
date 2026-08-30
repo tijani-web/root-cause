@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/micro1-hackathon/rootcause/internal/agent"
 	"github.com/micro1-hackathon/rootcause/internal/models"
@@ -43,6 +44,14 @@ func wrapText(text string, width int, indent string) string {
 		lineLen += len(word)
 	}
 	return sb.String()
+}
+
+func typewriterPrint(text string) {
+	for _, c := range text {
+		fmt.Print(string(c))
+		time.Sleep(15 * time.Millisecond)
+	}
+	fmt.Println()
 }
 
 func main() {
@@ -121,7 +130,8 @@ func main() {
 		}
 		fmt.Printf("  [AGENT]    got=%s correct=%v attempts=%d\n", agentCause, agentCorrect, agentAttempts)
 		if agentReasoning != "" {
-			fmt.Printf("  [AGENT]    reasoning:\n%s\n", wrapText(agentReasoning, 90, "             "))
+			fmt.Printf("  [AGENT]    reasoning:\n")
+			typewriterPrint(wrapText(agentReasoning, 90, "             "))
 		}
 		fmt.Println()
 
