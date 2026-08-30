@@ -1,47 +1,69 @@
-# RootCause: The Anti-Hallucination Architecture
+# RootCause: Deterministic Verification for AI Observability
 
-**Built for the micro1 Frontier Engineering Challenge 2026**
+Built for the micro1 Frontier Engineering Challenge 2026.
 
-RootCause is an agentic workflow that diagnoses performance bottlenecks in backend services. But unlike most AI diagnostic tools, **it is mathematically incapable of hallucinating a root cause.**
+## 1. Context & Value Proposition
 
-It uses a **Detective/Verifier architecture**:
-1. **The Detective (LLM)** looks at the raw OpenTelemetry metrics and proposes a hypothesis.
-2. **The Verifier (Deterministic Go code)** runs a strict delta-based signature check against a healthy baseline. 
-3. If the signature fails, the LLM is rejected, fed the exact failing condition, and forced to try again.
+**Intended User:** Site Reliability Engineers (SREs), DevOps professionals, and backend infrastructure teams.
 
-## Why this is necessary
+**Current Bottleneck:** When a production incident occurs, engineers face a wall of metrics and logs. LLMs can process these metrics, but they suffer from high hallucination rates in observability—often blaming statistically irrelevant noise (like a minor Garbage Collection spike) simply because it stands out.
 
-LLMs are people-pleasers. If you give them a dashboard with a mild GC spike and ask "why is the service slow?", they will blame the GC because they want to give you an answer. Real observability requires an agent that is perfectly comfortable saying "none of the math adds up." 
+**Why Solving It Is Valuable:** False positives in incident response waste critical triage time. By forcing an AI diagnostic agent to mathematically prove its hypothesis against deterministic signatures, we can eliminate diagnostic hallucinations, reduce false escalations, and drastically lower Mean Time to Resolution (MTTR).
 
-By forcing the LLM to submit its hypothesis to deterministic Go code, we guarantee that the final report is backed by actual signal, not just a plausible-sounding guess.
+## 2. Architecture
 
-## The Eval: Proving the Delta
+RootCause separates hypothesis generation from validation using a **Detective/Verifier** architecture:
+1. **The Detective (LLM):** Ingests OpenTelemetry-formatted baseline and incident snapshots. It utilizes Anthropic Tool Use to output a strict JSON hypothesis containing the proposed cause, confidence score, and specific metric deltas.
+2. **The Verifier (Deterministic Go):** Evaluates the LLM's hypothesis against hardcoded delta signatures (e.g., locking wait times must exceed 5x the baseline). If the signature fails, the LLM is rejected and forced to retry with the exact failing condition.
 
-We built a deterministic synthetic dataset of 13 scenarios (11 specific bottlenecks, 1 clean, 1 hard multi-signal case). Each scenario injects the true root cause, but also injects **deliberate noise** (e.g. mildly elevated disk I/O during a lock contention issue).
+## 3. Reproduction Guide
 
-The eval harness pits a naive **Baseline** (single-shot LLM with no verification) against the **Agent** (Detective/Verifier loop).
+This guide is designed for a clean environment. 
 
-## How to Reproduce
+### Prerequisites
+- Go 1.21 or higher
+- An Anthropic API Key (Claude 3.5 Haiku is used for the evaluation)
+- **Approximate runtime:** ~1 minute
+- **Approximate cost:** ~$0.10 for a full 13-scenario evaluation run
 
-Everything is built in standard Go. No external agent frameworks, no databases.
+### Setup & Data Generation
 
-1. **Clone the repo**
-2. **Generate the dataset** (this will create `data/scenarios/` and `data/ground_truth.json`):
+1. **Clone the repository and install dependencies:**
+   ```bash
+   git clone https://github.com/tijani-web/root-cause.git
+   cd rootCause
+   go mod tidy
+   ```
+
+2. **Generate the Dataset:**
+   This command generates 13 deterministic synthetic scenarios (11 specific bottlenecks, 1 clean state, 1 hard multi-signal state) in `data/scenarios/`. It also generates the ground truth mapping.
    ```bash
    go run cmd/generate/main.go
    ```
-3. **Verify the signatures mathematically** (this proves exactly 1 signature passes per scenario, without any LLM involved):
+
+3. **Validate the Deterministic Signatures:**
+   This proves the underlying Go signatures are mathematically sound before the LLM is introduced.
    ```bash
    go run cmd/verify/main.go
    ```
-4. **Run the full evaluation** (requires Anthropic API key):
+
+### Evaluation Run
+
+1. **Configure your API Key:**
+   Create a `.env` file in the root directory and add your Anthropic credentials:
+   ```env
+   ANTHROPIC_API_KEY=sk-ant-...
+   # Optional: Required only if you are using an Identity-Linked API key
+   ANTHROPIC_WORKSPACE_ID=wrk_...
+   ```
+
+2. **Run the Evaluation Harness:**
+   This script runs the unassisted Baseline LLM against the 13 scenarios, followed immediately by the Detective/Verifier Agent loop. 
    ```bash
-   export ANTHROPIC_API_KEY="sk-ant-..."
    go run cmd/eval/main.go
    ```
 
-The eval will output a complete report showing how many times the baseline was fooled by the noise, and how the Agent's rejection loop forced it to find the true cause.
-
-## Outputs
-- **`data/eval_results.json`**: The final scored comparison between Baseline and Agent.
-- **`data/trajectories/`**: The raw LLM conversation logs showing exactly how the Verifier rejected the LLM and forced it to self-correct.
+### Expected Output
+- The console will output a real-time log of the LLM hypotheses and Verifier rejections, concluding with a final comparison delta.
+- **`data/eval_results.json`**: The final scored comparison matrix.
+- **`data/trajectories/`**: Raw LLM conversation logs showcasing the exact feedback loops that shaped the agent's final decision.
