@@ -20,7 +20,28 @@ type EvalRecord struct {
 	AgentCorrect  bool   `json:"agent_correct"`
 	AgentAttempts int    `json:"agent_attempts"`
 	BaselineReasoning string `json:"baseline_reasoning"`
-	AgentReasoning    string `json:"agent_reasoning"`
+}
+
+func wrapText(text string, width int, indent string) string {
+	words := strings.Fields(text)
+	if len(words) == 0 {
+		return ""
+	}
+	var sb strings.Builder
+	sb.WriteString(indent)
+	lineLen := 0
+	for _, word := range words {
+		if lineLen+len(word)+1 > width {
+			sb.WriteString("\n" + indent)
+			lineLen = 0
+		} else if lineLen > 0 {
+			sb.WriteString(" ")
+			lineLen++
+		}
+		sb.WriteString(word)
+		lineLen += len(word)
+	}
+	return sb.String()
 }
 
 func main() {
@@ -98,6 +119,9 @@ func main() {
 			os.WriteFile(filepath.Join(trajDir, fmt.Sprintf("scenario_%s.json", scenarioID)), trajJSON, 0644)
 		}
 		fmt.Printf("  [AGENT]    got=%s correct=%v attempts=%d\n", agentCause, agentCorrect, agentAttempts)
+		if agentReasoning != "" {
+			fmt.Printf("  [AGENT]    reasoning:\n%s\n", wrapText(agentReasoning, 90, "             "))
+		}
 		fmt.Println()
 
 		records = append(records, EvalRecord{
