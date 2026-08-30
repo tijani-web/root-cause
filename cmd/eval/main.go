@@ -20,6 +20,7 @@ type EvalRecord struct {
 	AgentCorrect  bool   `json:"agent_correct"`
 	AgentAttempts int    `json:"agent_attempts"`
 	BaselineReasoning string `json:"baseline_reasoning"`
+	AgentReasoning    string `json:"agent_reasoning"`
 }
 
 func wrapText(text string, width int, indent string) string {
