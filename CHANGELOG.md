@@ -3,9 +3,9 @@
 ## Eval Results
 *(Run `go run cmd/eval/main.go` and place your final scores here before submission)*
 
-- **Baseline Score:** [x]/13
-- **Agent Score:** [x]/13
-- **Delta:** +[x]
+- **Baseline Score:** 6/13 (46%)
+- **Agent Score:** 12/13 (92%)
+- **Delta:** +6
 
 ## The Hot Take: LLMs are People-Pleasers
 
