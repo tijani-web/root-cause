@@ -22,7 +22,7 @@ This guide is designed for a clean environment.
 
 ### Prerequisites
 - Go 1.21 or higher
-- An Anthropic API Key (Claude 3.5 Haiku is used for the evaluation)
+- An Anthropic API Key (Claude 4.5 Haiku is used for the evaluation)
 - **Approximate runtime:** ~1 minute
 - **Approximate cost:** ~$0.10 for a full 13-scenario evaluation run
 
