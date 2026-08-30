@@ -57,7 +57,7 @@ type RejectedHypothesis struct {
 
 // AgentDiagnose runs the Detective/Verifier loop for one scenario
 func AgentDiagnose(s models.ScenarioData) (*AgentDiagnosis, error) {
-	const maxAttempts = 4
+	const maxAttempts = 6
 
 	var rejected []RejectedHypothesis
 	var conversation []LLMMessage
